@@ -1,4 +1,4 @@
-import { prop, getModelForClass, Ref } from '@typegoose/typegoose'
+import { prop, getModelForClass, Ref, post } from '@typegoose/typegoose'
 import { User } from './User'
 
 export class Community {
@@ -9,5 +9,11 @@ export class Community {
   public logo?: string
 
   @prop({ ref: () => User, default: [] })
-  public members?: Ref<User>[]
+  public members: Ref<User>[] = []
+
+  @prop({
+    type: Number,
+    default: 0,
+  })
+  public totalExperiencePoints: number = 0
 }

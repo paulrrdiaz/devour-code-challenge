@@ -32,8 +32,12 @@ export class UserService {
       }
 
       user.community = community
-      await user.save()
-      await community.updateOne({ $push: { members: user } })
+      const savedUser = await user.save()
+      await community.updateOne({
+        totalExperiencePoints:
+          community.totalExperiencePoints + savedUser.totalExperiencePoints,
+        $push: { members: user },
+      })
 
       return { ...user.toJSON() }
     }
@@ -43,7 +47,7 @@ export class UserService {
     const user = await this.findOne(userId)
 
     if (user) {
-      if (!user.community) {
+      if (user.community?._id.toString() !== communityId) {
         throw new this.error.NotFound('User is not part of this community')
       }
 
@@ -55,8 +59,12 @@ export class UserService {
 
       user.community = null
 
-      await user.save()
-      await community.updateOne({ $pull: { members: { _id: userId } } })
+      const savedUser = await user.save()
+      await community.updateOne({
+        totalExperiencePoints:
+          community.totalExperiencePoints - savedUser.totalExperiencePoints,
+        $pull: { members: userId },
+      })
 
       return { ...user.toJSON() }
     }
