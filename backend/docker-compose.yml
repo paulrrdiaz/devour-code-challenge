@@ -1,0 +1,12 @@
+name: devour-backend
+
+services:
+  db:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_DATABASE: devour-backend-db
+    volumes:
+      - ./mongo:/data/db
